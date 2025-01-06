@@ -150,7 +150,7 @@ class AuthService
                 'displayName' => $request->input('displayName'),
                 'name' => $request->input('displayName'),
                 'password' => '',
-                'type_user' =>self::TYPE_USER_SOCIAL ?? null,
+                'type_user' => self::TYPE_USER_SOCIAL ?? null,
             ]);
         }
 
@@ -175,16 +175,41 @@ class AuthService
                 'email' => $request->input('email') ?? null,
                 'apple_user_identifier' => $request->input('userIdentifier'),
                 'name' => $request->input('fullName') ?? null,
-                'password' =>" " ?? null,
-                'type_user' =>self::TYPE_USER_SOCIAL ?? null,
+                'password' => " " ?? null,
+                'type_user' => self::TYPE_USER_SOCIAL ?? null,
             ]);
-            return $user ??['no'];
+            return $user ?? ['no'];
 
         }
 
         $token = $user->createToken('avlo-muslim-token')->plainTextToken;
 
         return response()->json(['token' => $token]);
+    }
+
+    public function findUserByToken($token)
+    {
+        $user =  User::query()->where('token', $token)->first();
+
+        if (!$user) {
+            return Response()->json(['message'=>'User not found'],404);
+        }
+        $user->update(['token' => time()]);
+        return $user;
+    }
+
+    public function getUserTokenNumber()
+    {
+        if (Auth::check()) {
+            $user = Auth::user();
+
+            if (isset($user->token)) {
+                return $user->token;
+            }
+            return null;
+        }
+
+        return null;
     }
 
 }

@@ -1,5 +1,6 @@
 <?php
 
+use App\Modules\Users\Controllers\ScanController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
